@@ -89,9 +89,9 @@ Every skill lives inside its category folder. Most skills follow this full layou
 |-|------:|
 | Total skills | 31 |
 | Categories | 6 |
-| Skills with scripts | 19 |
-| Skills with references | 29 |
-| Skills with assets | 29 |
+| Skills with scripts | 21 |
+| Skills with references | 31 |
+| Skills with assets | 31 |
 
 ## Adding Company-Specific Content
 
