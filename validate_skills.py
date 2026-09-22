@@ -42,15 +42,15 @@ def validate_frontmatter(content):
 
 
 def validate_sections(content):
-    """Check if required sections are present"""
+    """Check if required sections are present (as an H1 or H2 heading)"""
     missing = []
     for section in REQUIRED_SECTIONS:
-        if f"## {section}" not in content:
+        if f"# {section}" not in content and f"## {section}" not in content:
             missing.append(section)
-    
+
     if missing:
         return False, f"Missing sections: {', '.join(missing)}"
-    
+
     return True, "OK"
 
 

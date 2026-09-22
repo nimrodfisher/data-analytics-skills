@@ -12,12 +12,33 @@ These skills help Claude provide better data analysis by:
 
 ## 🚀 Your First Skill in 3 Steps
 
+### Before you start: install the skill
+
+Clone this repo, then copy the skill folder into your agent's skills directory:
+
+```bash
+git clone https://github.com/nimrodfisher/data-analytics-skills.git
+cd data-analytics-skills
+```
+
+**Claude Code:** personal skills (all projects) go in `~/.claude/skills/`, project skills in `.claude/skills/` inside your project:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.claude/skills/
+```
+
+**Codex:** user skills (all repos) go in `~/.agents/skills/`, repo skills in `.agents/skills/` at the repository root:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.agents/skills/
+```
+
 ### Step 1: Pick a Skill
 
-Start with **programmatic-eda** for your first analysis:
+Start with **programmatic-eda** for your first analysis (already installed above):
 
 ```
-Location: 01-data-quality-validation/programmatic-eda/SKILL.md
+Location: ~/.claude/skills/programmatic-eda/SKILL.md   (or ~/.agents/skills/ for Codex)
 Purpose: Systematic exploratory data analysis
 Best for: Analyzing any new dataset
 ```
