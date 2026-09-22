@@ -24,10 +24,6 @@
   <text x="270" y="214" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#1e3a5f">data-quality-audit</text>
   <rect x="45" y="235" width="450" height="38" rx="8" fill="#a5d8ff" stroke="#4a9eed" stroke-width="1"/>
   <text x="270" y="259" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#1e3a5f">query-validation</text>
-  <rect x="45" y="280" width="450" height="38" rx="8" fill="#a5d8ff" stroke="#4a9eed" stroke-width="1"/>
-  <text x="270" y="304" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#1e3a5f">schema-mapper</text>
-  <rect x="45" y="325" width="450" height="38" rx="8" fill="#a5d8ff" stroke="#4a9eed" stroke-width="1"/>
-  <text x="270" y="349" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#1e3a5f">metric-reconciliation</text>
 
   <!-- CAT 02 HEADER -->
   <text x="565" y="110" font-size="17" font-weight="bold" font-family="Arial, sans-serif" fill="#78350f">02  Documentation &amp; Knowledge</text>
@@ -44,6 +40,10 @@
   <text x="780" y="304" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#78350f">sql-to-business-logic</text>
   <rect x="555" y="325" width="450" height="38" rx="8" fill="#ffd8a8" stroke="#f59e0b" stroke-width="1"/>
   <text x="780" y="349" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#78350f">analysis-assumptions-log</text>
+  <rect x="555" y="370" width="450" height="38" rx="8" fill="#ffd8a8" stroke="#f59e0b" stroke-width="1"/>
+  <text x="780" y="394" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#78350f">metric-reconciliation</text>
+  <rect x="555" y="415" width="450" height="38" rx="8" fill="#ffd8a8" stroke="#f59e0b" stroke-width="1"/>
+  <text x="780" y="439" text-anchor="middle" font-size="14" font-family="Arial, sans-serif" fill="#78350f">schema-mapper</text>
 
   <!-- CAT 03 HEADER -->
   <text x="1075" y="110" font-size="17" font-weight="bold" font-family="Arial, sans-serif" fill="#4c1d95">03  Data Analysis &amp; Investigation</text>

@@ -28,16 +28,14 @@ Every skill lives inside its category folder. Most skills follow this full layou
 
 ## Categories and Skills
 
-### 01-data-quality-validation/ — 5 skills
+### 01-data-quality-validation/ — 3 skills
 | Skill | scripts | references | assets |
 |-------|:-------:|:----------:|:------:|
 | programmatic-eda | ✓ | ✓ | ✓ |
 | data-quality-audit | ✓ | ✓ | ✓ |
 | query-validation | ✓ | ✓ | ✓ |
-| schema-mapper | — | — | — |
-| metric-reconciliation | — | — | — |
 
-### 02-documentation-knowledge/ — 5 skills
+### 02-documentation-knowledge/ — 7 skills
 | Skill | scripts | references | assets |
 |-------|:-------:|:----------:|:------:|
 | semantic-model-builder | ✓ | ✓ | ✓ |
@@ -45,6 +43,8 @@ Every skill lives inside its category folder. Most skills follow this full layou
 | data-catalog-entry | ✓ | ✓ | ✓ |
 | sql-to-business-logic | ✓ | ✓ | ✓ |
 | analysis-assumptions-log | ✓ | ✓ | ✓ |
+| metric-reconciliation | ✓ | ✓ | ✓ |
+| schema-mapper | ✓ | ✓ | ✓ |
 
 ### 03-data-analysis-investigation/ — 7 skills
 | Skill | scripts | references | assets |

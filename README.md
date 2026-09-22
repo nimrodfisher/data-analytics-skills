@@ -1,8 +1,8 @@
 <div align="center">
 
-# Data Analytics Skills for Claude
+# Data Analytics Skills for Claude & Codex
 
-**31 portable AI-powered skills that turn Claude into a hands-on analytics partner**
+**31 portable AI-powered skills that turn Claude or Codex into a hands-on analytics partner**
 
 *No setup required · Works for any company or industry*
 
@@ -19,7 +19,7 @@
 
 ## What's in this repo?
 
-A structured library of **skills** (reusable instruction sets) that Claude activates on demand to help with every stage of the analyst workflow: from data quality checks and deep-dive analysis, through documentation and dashboards, all the way to stakeholder communication.
+A structured library of **skills** (reusable instruction sets) that Claude Code or Codex activates on demand to help with every stage of the analyst workflow: from data quality checks and deep-dive analysis, through documentation and dashboards, all the way to stakeholder communication. Skills follow the open Agent Skills standard (a plain `SKILL.md` format), so they also work with other compatible agents like Cursor and Windsurf.
 
 ---
 
@@ -50,7 +50,7 @@ Each skill asks targeted questions to gather exactly what it needs, then execute
 ## 📚 Skill Categories
 
 <details>
-<summary><b>🔍 01 &nbsp;·&nbsp; Data Quality & Validation</b> &nbsp;&nbsp; <code>5 skills</code></summary>
+<summary><b>🔍 01 &nbsp;·&nbsp; Data Quality & Validation</b> &nbsp;&nbsp; <code>3 skills</code></summary>
 <br>
 
 *Foundation — start here whenever you're working with new data.*
@@ -60,13 +60,11 @@ Each skill asks targeted questions to gather exactly what it needs, then execute
 | **[programmatic-eda](01-data-quality-validation/programmatic-eda/)** | Systematic exploratory data analysis with automated sanity checks |
 | **[data-quality-audit](01-data-quality-validation/data-quality-audit/)** | Comprehensive quality assessment against business rules and schema |
 | **[query-validation](01-data-quality-validation/query-validation/)** | SQL review for correctness, performance, and edge cases |
-| **[schema-mapper](01-data-quality-validation/schema-mapper/)** | Understand database relationships and table structures |
-| **[metric-reconciliation](01-data-quality-validation/metric-reconciliation/)** | Investigate discrepancies between metric sources |
 
 </details>
 
 <details>
-<summary><b>📝 02 &nbsp;·&nbsp; Documentation & Knowledge</b> &nbsp;&nbsp; <code>5 skills</code></summary>
+<summary><b>📝 02 &nbsp;·&nbsp; Documentation & Knowledge</b> &nbsp;&nbsp; <code>7 skills</code></summary>
 <br>
 
 *Build reusable context so you never explain the same thing twice.*
@@ -78,6 +76,8 @@ Each skill asks targeted questions to gather exactly what it needs, then execute
 | **[data-catalog-entry](02-documentation-knowledge/data-catalog-entry/)** | Standardized metadata and descriptions for data assets |
 | **[sql-to-business-logic](02-documentation-knowledge/sql-to-business-logic/)** | Translate complex SQL into plain business language |
 | **[analysis-assumptions-log](02-documentation-knowledge/analysis-assumptions-log/)** | Track every assumption and decision in an analysis |
+| **[metric-reconciliation](02-documentation-knowledge/metric-reconciliation/)** | Trace and resolve discrepancies when metric sources disagree |
+| **[schema-mapper](02-documentation-knowledge/schema-mapper/)** | Column-level mapping between source and target schemas |
 
 </details>
 
@@ -150,16 +150,38 @@ Each skill asks targeted questions to gather exactly what it needs, then execute
 
 ## 🚀 Quick Start
 
+### Install
+
+Each skill is a folder containing a `SKILL.md` (plus optional `scripts/`, `references/`, and `assets/`). Clone the repo and copy the skills you want into your agent's skills directory:
+
+```bash
+git clone https://github.com/nimrodfisher/data-analytics-skills.git
+```
+
+**Claude Code:** personal skills (all projects) go in `~/.claude/skills/`, project skills in `.claude/skills/` inside your project:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.claude/skills/
+```
+
+**Codex:** user skills (all repos) go in `~/.agents/skills/`, repo skills in `.agents/skills/` at the repository root:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.agents/skills/
+```
+
+New here? [QUICKSTART.md](./QUICKSTART.md) walks you through your first skill in 5 minutes, and [STRUCTURE.md](./STRUCTURE.md) explains how every skill is packaged.
+
 > [!TIP]
-> Describe your task to Claude naturally — it will select and activate the right skill automatically. No slash commands needed.
+> Describe your task to Claude or Codex naturally — it will select and activate the right skill automatically. No slash commands needed.
 
 **Example:**
 
 ```
 You:    "I need to understand why our activation rate dropped 12% last week"
-Claude: [activates root-cause-investigation, asks for metric data and context]
+Agent:  [activates root-cause-investigation, asks for metric data and context]
 You:    [provides data and business context]
-Claude: [runs structured investigation with hypothesis testing]
+Agent:  [runs structured investigation with hypothesis testing]
 ```
 
 ### Which skill to start with?
@@ -181,13 +203,13 @@ Claude: [runs structured investigation with hypothesis testing]
 
 Each skill follows the same **on-demand context pattern**:
 
-1. **Request minimum viable context** — Claude asks only what's essential to start
+1. **Request minimum viable context** — your agent asks only what's essential to start
 2. **Execute the workflow** — structured, step-by-step analytical process
 3. **Surface assumptions** — anything uncertain is flagged, not silently assumed
 4. **Deliver a consistent output** — templated result you can share or iterate on
 
 > [!NOTE]
-> Skills degrade gracefully: if you can't provide everything, Claude states what it's assuming and proceeds.
+> Skills degrade gracefully: if you can't provide everything, your agent states what it's assuming and proceeds.
 
 ---
 
@@ -204,7 +226,7 @@ skill-name/
     └── business-rules.md       ← thresholds, edge cases, etc.
 ```
 
-Claude will pull this context automatically when the skill runs.
+Your agent will pull this context automatically when the skill runs.
 
 ---
 
@@ -212,7 +234,7 @@ Claude will pull this context automatically when the skill runs.
 
 **Week 1 — Get comfortable**
 - Run `programmatic-eda` on a familiar dataset
-- Practice providing context when Claude asks
+- Practice providing context when your agent asks
 - Use `analysis-planning` at the start of your next project
 
 **Week 2–3 — Add your core toolkit**
@@ -227,8 +249,14 @@ Claude will pull this context automatically when the skill runs.
 
 ---
 
+## 📐 Also by the maintainer
+
+**[Caliboard](https://caliboard.pro/)** — visual plan review for Claude Code and Codex. See what your agent plans before it writes code: review exact steps, challenge decisions, and approve the revision that becomes code.
+
+---
+
 <div align="center">
 
-**Version:** 1.1.0 &nbsp;·&nbsp; **Maintainer:** Nimrod Fisher &nbsp;·&nbsp; **Last Updated:** April 2026
+**Version:** 1.2.0 &nbsp;·&nbsp; **Maintainer:** Nimrod Fisher &nbsp;·&nbsp; **Last Updated:** September 2026
 
 </div>
