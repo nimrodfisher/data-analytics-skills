@@ -1,0 +1,65 @@
+# QUICKSTART.md - paste-ready replacement (one section only)
+
+Yes, QUICKSTART.md needs the same install-placement fix: it jumps from
+"Pick a Skill" straight into "Trigger the Skill" with no installation step,
+so a fresh visitor has no way to make Claude or Codex see the skills.
+
+Replace ONLY the block from the "## 🚀 Your First Skill in 3 Steps" heading
+through the end of the Step 1 code fence with the block below.
+Everything else in QUICKSTART.md stays byte-identical (the "all 31 skills"
+line in Next Steps stays correct after the duplicate cleanup).
+
+==================== REPLACE FROM ====================
+
+## 🚀 Your First Skill in 3 Steps
+
+### Step 1: Pick a Skill
+
+Start with **programmatic-eda** for your first analysis:
+
+```
+Location: 01-data-quality-validation/programmatic-eda/SKILL.md
+Purpose: Systematic exploratory data analysis
+Best for: Analyzing any new dataset
+```
+
+===================== REPLACE TO =====================
+
+## 🚀 Your First Skill in 3 Steps
+
+### Before you start: install the skill
+
+Clone this repo, then copy the skill folder into your agent's skills directory:
+
+```bash
+git clone https://github.com/nimrodfisher/data-analytics-skills.git
+cd data-analytics-skills
+```
+
+**Claude Code:** personal skills (all projects) go in `~/.claude/skills/`, project skills in `.claude/skills/` inside your project:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.claude/skills/
+```
+
+**Codex:** user skills (all repos) go in `~/.agents/skills/`, repo skills in `.agents/skills/` at the repository root:
+
+```bash
+cp -r 01-data-quality-validation/programmatic-eda ~/.agents/skills/
+```
+
+### Step 1: Pick a Skill
+
+Start with **programmatic-eda** for your first analysis (already installed above):
+
+```
+Location: ~/.claude/skills/programmatic-eda/SKILL.md   (or ~/.agents/skills/ for Codex)
+Purpose: Systematic exploratory data analysis
+Best for: Analyzing any new dataset
+```
+
+===================== END =====================
+
+Optional, outside this patch: the 1-Minute Overview says "These skills help
+Claude provide better data analysis" - changing "Claude" to "Claude or Codex"
+there would match the new README positioning.
