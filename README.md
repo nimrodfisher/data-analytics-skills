@@ -147,6 +147,16 @@ Each skill asks targeted questions to gather exactly what it needs, then execute
 </details>
 
 ---
+## 📐 Also by the maintainer
+
+**[Caliboard](https://caliboard.pro/)** — visual plan review for Claude Code and Codex. See what your agent plans before it writes code: review exact steps, challenge decisions, and approve the revision that becomes code.
+
+---
+
+<div align="center">
+
+**Version:** 1.2.0 &nbsp;·&nbsp; **Maintainer:** Nimrod Fisher &nbsp;·&nbsp; **Last Updated:** September 2026
+
 
 ## 🚀 Quick Start
 
@@ -246,17 +256,5 @@ Your agent will pull this context automatically when the skill runs.
 - Chain 4–5 skills end-to-end on a full project
 - Add company-specific references to the skills you use most
 - Build team context documents for shared onboarding
-
----
-
-## 📐 Also by the maintainer
-
-**[Caliboard](https://caliboard.pro/)** — visual plan review for Claude Code and Codex. See what your agent plans before it writes code: review exact steps, challenge decisions, and approve the revision that becomes code.
-
----
-
-<div align="center">
-
-**Version:** 1.2.0 &nbsp;·&nbsp; **Maintainer:** Nimrod Fisher &nbsp;·&nbsp; **Last Updated:** September 2026
 
 </div>
