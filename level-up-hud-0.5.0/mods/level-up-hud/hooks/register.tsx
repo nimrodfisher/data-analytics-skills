@@ -7,7 +7,11 @@ import type { Gauge, WasteSlice } from './svg'
 
 const PANE = 'level-up-hud'
 const TITLE = 'Claude HUD'
-const DAILY_QUEST = 25 // turns per day to clear the daily quest
+const DAILY_QUEST = 20 // useful actions a day (edits and commands that worked, none of them waste)
+const TURN_XP = 5 // a finished turn
+// tools whose successful call is work done: they change the project or run it
+const EDIT_TOOLS = new Set(['Edit', 'MultiEdit', 'Write', 'NotebookEdit'])
+const WORK_TOOLS = new Set([...EDIT_TOOLS, 'Bash'])
 const STORE_KEY = 'progress-1'
 
 // ── waste thresholds ─────────────────────────────────────────
@@ -35,7 +39,8 @@ const progress = atom({ plugin: 'level-up-hud', key: 'progress' } as const, {
   day: '',
   turnsToday: 0,
   toolsToday: 0,
-}, { shape: 'progress-1' })
+  workToday: 0,
+}, { shape: 'progress-2' })
 
 const waste = atom({ plugin: 'level-up-hud', key: 'waste' } as const, {
   reads: [],
@@ -289,7 +294,7 @@ async function pushStatus($: EngineInterface, cwd: string) {
 }
 
 function rollDay(p: Progress, now: number): Progress {
-  return p.day === today(now) ? p : { ...p, day: today(now), turnsToday: 0, toolsToday: 0 }
+  return p.day === today(now) ? p : { ...p, day: today(now), turnsToday: 0, toolsToday: 0, workToday: 0 }
 }
 
 // what /context sees: MCP schemas, memory files, the skill listing, and the window by category
@@ -332,6 +337,20 @@ const ranLabel = (tool: string, e: object) => {
   return tool === 'Bash' && arg ? `$ ${arg}` : arg ? `${name}: ${arg}` : name
 }
 
+// XP follows one rule: tokens spent on work earn, tokens spent on nothing don't.
+// Adds XP (and useful actions toward the daily quest), toasting level-ups and the quest as they happen.
+async function gain($: EngineInterface, xp: number, work: number, extra: (p: Progress) => Partial<Progress> = () => ({})) {
+  const now = await $.clock.now()
+  const before = rollDay(await read($, progress), now)
+  const after: Progress = { ...before, ...extra(before), xp: before.xp + xp, workToday: before.workToday + work }
+  await update($, progress, () => after)
+  if (levelOf(after.xp) > levelOf(before.xp)) {
+    $.ui.toast(`Level up · Lv ${levelOf(after.xp)} ${rankOf(levelOf(after.xp))}`)
+  }
+  if (before.workToday < DAILY_QUEST && after.workToday >= DAILY_QUEST) $.ui.toast('Daily quest cleared ✓')
+  return after
+}
+
 export const register: Register = on => {
   let cwd = ''
 
@@ -341,7 +360,7 @@ export const register: Register = on => {
 
     const now = await $.clock.now()
     const saved = (await $.store.get(STORE_KEY)) as Progress | undefined
-    await update($, progress, p => rollDay(saved && typeof saved.xp === 'number' ? saved : p, now))
+    await update($, progress, p => rollDay(saved && typeof saved.xp === 'number' ? { ...p, ...saved, workToday: saved.workToday ?? 0 } : p, now))
 
     const model = await $.session.model()
     const effort = (await $.env.get('CLAUDE_EFFORT')) ?? (await $.env.get('CLAUDE_CODE_EFFORT_LEVEL'))
@@ -391,21 +410,33 @@ export const register: Register = on => {
     return next(e)
   })
 
-  // what each tool call put into the main context
+  // what each tool call put into the main context, and what it earned
   on('tool.call', async ($, e, next) => {
-    await update($, progress, p => ({ ...p, xp: p.xp + 2, toolsToday: p.toolsToday + 1 })).catch(() => undefined)
     const ran = await next(e)
     if (ran.deny !== undefined || field(e, 'agentId') !== undefined) return ran
 
     const tokens = tokensOf(ran.text)
     const tool = e.tool
+    const path = field(e, 'file_path')
+    const isRanged = field(e, 'offset') !== undefined || field(e, 'limit') !== undefined
+    const before = await read($, waste)
+    const isWaste =
+      tool === 'Read'
+        ? (!isRanged && tokens >= BIG_READ) || before.reads.some(r => r.path === path)
+        : tool !== 'Agent' && tool !== 'Task' && tokens >= LONG_OUTPUT
+    const isWork = WORK_TOOLS.has(tool) && !ran.isError && !isWaste
+    const xp =
+      ran.isError || isWaste ? 0
+      : EDIT_TOOLS.has(tool) ? 3
+      : tool === 'Bash' || (tool === 'Read' && isRanged) || tool === 'Grep' || tool === 'Glob' ? 2
+      : 1
+    await gain($, xp, isWork ? 1 : 0, p => ({ toolsToday: p.toolsToday + 1 })).catch(() => undefined)
+
     await update($, waste, w => {
       const usedTools = tool.startsWith('mcp__') && !w.usedTools.includes(tool) ? [...w.usedTools, tool] : w.usedTools
       let reads: FileRead[] = w.reads
       let outputs: LongOutput[] = w.outputs
-      const path = field(e, 'file_path')
       if (tool === 'Read' && typeof path === 'string' && !ran.isError) {
-        const isRanged = field(e, 'offset') !== undefined || field(e, 'limit') !== undefined
         const had = w.reads.find(r => r.path === path)
         reads = had
           ? w.reads.map(r =>
@@ -432,30 +463,17 @@ export const register: Register = on => {
   })
 
   on('turn.complete', async ($, e, next) => {
-    const now = await $.clock.now()
-    const before = await read($, progress)
-    const p = rollDay(before, now)
-    let after: Progress = { ...p, xp: p.xp + 10, turnsToday: p.turnsToday + 1 }
-
-    // a tip that was shown and is gone now was cleaned up: reward it
+    // a tip that was shown and is gone now was cleaned up: unused tokens freed for real work
     await refreshBreakdown($)
     const hd = await read($, hud)
     const v = await read($, tips)
     const live = tipsFor(await read($, waste), hd.contextPct, cwd).map(t => t.id)
     const cleared = v.shown.filter(id => !live.includes(id) && !v.dismissed.includes(id))
-    if (cleared.length > 0) {
-      after = { ...after, xp: after.xp + CLEAN_BONUS * cleared.length }
-      $.ui.toast(`✓ Context cleaned up · +${CLEAN_BONUS * cleared.length} XP`)
-    }
+    if (cleared.length > 0) $.ui.toast(`✓ Freed unused context · +${CLEAN_BONUS * cleared.length} XP`)
     await update($, tips, t => ({ ...t, shown: live, open: t.open && live.includes(t.open) ? t.open : null }))
 
-    await update($, progress, () => after)
+    const after = await gain($, TURN_XP + CLEAN_BONUS * cleared.length, 0, p => ({ turnsToday: p.turnsToday + 1 }))
     await $.store.set(STORE_KEY, after)
-
-    if (levelOf(after.xp) > levelOf(before.xp)) {
-      $.ui.toast(`Level up · Lv ${levelOf(after.xp)} ${rankOf(levelOf(after.xp))}`)
-    }
-    if (after.turnsToday === DAILY_QUEST) $.ui.toast('Daily quest cleared ✓')
     await pushStatus($, cwd)
     return next(e)
   })
@@ -606,8 +624,8 @@ export const register: Register = on => {
             />
           ) : null}
           <Svg
-            source={footerSvg(p.turnsToday, DAILY_QUEST, p.toolsToday, hd.costUsd.toFixed(2))}
-            alt={`Daily quest ${p.turnsToday} of ${DAILY_QUEST}. $${hd.costUsd.toFixed(2)} this session.`}
+            source={footerSvg(p.workToday, DAILY_QUEST, p.toolsToday, hd.costUsd.toFixed(2))}
+            alt={`Daily quest: ${p.workToday} of ${DAILY_QUEST} useful actions. $${hd.costUsd.toFixed(2)} this session.`}
           />
         </Box>
       )
@@ -664,7 +682,7 @@ export const register: Register = on => {
     const colW = Math.floor(inner / Math.max(1, tGauges.length))
     const tSlices = all.filter(t => (t.saves ?? 0) > 0)
     const sliceW = (t: Tip) => Math.max(1, Math.round(((t.saves ?? 0) / Math.max(1, saves)) * inner))
-    const questPct = Math.min(100, (p.turnsToday / DAILY_QUEST) * 100)
+    const questPct = Math.min(100, (p.workToday / DAILY_QUEST) * 100)
     const effortN = pips ?? 0
 
     return (
@@ -777,7 +795,7 @@ export const register: Register = on => {
           <Box justifyContent="space-between">
             <Text>
               <Text bold color={SC.text}>Daily quest </Text>
-              <Text color={SC.muted}>{p.turnsToday >= DAILY_QUEST ? '✓' : `${p.turnsToday}/${DAILY_QUEST}`}</Text>
+              <Text color={SC.muted}>{p.workToday >= DAILY_QUEST ? '✓' : `${p.workToday}/${DAILY_QUEST}`}</Text>
             </Text>
             <Text bold color={SC.text}>${hd.costUsd.toFixed(2)}</Text>
           </Box>

@@ -1,6 +1,6 @@
 {
   "name": "level-up-hud",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Clean HUD for model, effort, usage limits and context, with a waste detector that shows where to save tokens",
   "author": { "name": "Nimrod Fisher" },
   "license": "MIT",

@@ -35,7 +35,7 @@ In the **terminal**, it draws the same information as clean text:
  ▸ Large read · schema.sql       6.4k
  ▸ Context 74% full                 !
  ────────────────────────────────────
- Quest 18/25 · 112 tools · $1.42
+ Quest 14/20 · 112 tools · $1.42
 ```
 
 ## What it shows
@@ -43,7 +43,7 @@ In the **terminal**, it draws the same information as clean text:
 - **Model and effort**, live as you switch.
 - **Usage limits**: 5-hour and weekly, with reset countdowns. Bars turn amber at 60% and red at 85%.
 - **Context fill** for this session.
-- **Level, XP and a daily quest**: each turn and tool call earns XP.
+- **Level, XP and a daily quest**: XP for work done, never for waste. See below.
 
 ## Save context: the waste detector
 
@@ -64,6 +64,21 @@ Below the tips, **Where your context goes** lists the five biggest parts of the 
 Action buttons put the command or rule into your prompt box. Nothing runs until you press Enter. **Dismiss** hides a tip for the rest of the session. When a tip clears up on its own, for example after you turn off a server or compact, you get +25 XP.
 
 Token counts are estimates: about 4 characters per token. MCP tools that load on demand (tool search) aren't counted, since they don't take up context until they're used.
+
+## Levels: spend tokens on work, not on nothing
+
+Using tokens is fine; tokens that do nothing are the waste. XP follows that rule:
+
+| What happened | XP |
+| --- | --- |
+| An edit or write that worked | +3 |
+| A command that worked, a line-range read, a Grep or Glob search | +2 |
+| Any other tool call that worked | +1 |
+| A finished turn | +5 |
+| A waste tip cleared (unused context freed) | +25 |
+| A failed call, a whole-file read over ~2k tokens, a re-read, a huge output | 0 |
+
+The **daily quest** is 20 useful actions a day: edits and commands that worked, none of them waste. Ranks go Novice, Apprentice, Coder, Hacker, Architect, Wizard, Archmage, Legend, one every 3 levels.
 
 ## Install
 

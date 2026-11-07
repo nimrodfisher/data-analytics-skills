@@ -236,3 +236,23 @@ test('the context-use card lists the biggest parts of the window on every surfac
   expect(drawn).toContain('Messages')
   await ui.unmount()
 })
+
+test('XP follows the work: an edit earns and counts toward the quest, a wasteful read earns nothing', async ($, on) => {
+  engine(on)
+  on('tool.call', (_, e) => ({ result: {}, text: e.tool === 'Read' ? 'x'.repeat(40000) : 'ok' }))
+  await $.session.start({ cwd: '/repo', surface: 'terminal', isInteractive: true })
+
+  // a whole-file read of ~10k tokens is waste: no XP
+  await $.tool.call({ tool: 'Read', file_path: BIG })
+  let ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect(await ui.find({ type: 'Text', text: /^0 \/ 40 XP$/ })).toBeDefined()
+  expect(await ui.find({ type: 'Text', text: /^0\/20$/ })).toBeDefined()
+  await ui.unmount()
+
+  // a small edit is work: +3 XP and one useful action
+  await $.tool.call({ tool: 'Edit', file_path: '/repo/a.ts', old_string: 'a', new_string: 'b' })
+  ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect(await ui.find({ type: 'Text', text: /^3 \/ 40 XP$/ })).toBeDefined()
+  expect(await ui.find({ type: 'Text', text: /^1\/20$/ })).toBeDefined()
+  await ui.unmount()
+})

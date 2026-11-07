@@ -6,7 +6,8 @@ export type Hud = {
   contextPct: number | null
   costUsd: number
 }
-export type Progress = { xp: number; day: string; turnsToday: number; toolsToday: number }
+/** XP, and today's counts; `workToday` is useful actions: edits and commands that worked, none of them waste. */
+export type Progress = { xp: number; day: string; turnsToday: number; toolsToday: number; workToday: number }
 
 /** One whole-file read: the tokens of its biggest result and how often it was read. */
 export type FileRead = { path: string; tokens: number; count: number; isRanged: boolean }
